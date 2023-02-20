@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"fmt"
+	"log"
 	"sync"
 
 	"github.com/muratovdias/test-proxy-server/internal/app/entities"
@@ -30,5 +30,5 @@ func (c *Cache) Set(key string, response entities.ProxyResponse) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.cache[key] = response
-	fmt.Println("response saved in cache")
+	log.Println("response saved in cache")
 }

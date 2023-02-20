@@ -23,13 +23,16 @@ func NewProxyUsecase(cache *cache.Cache) *ProxyUsecase {
 }
 
 func (p *ProxyUsecase) ProxyRequest(request entities.ProxyRequest) (entities.ProxyResponse, error) {
+	if request.Method == "POST" {
+		return entities.ProxyResponse{}, fmt.Errorf("only GET method is allowed")
+	}
 	_, err := url.Parse(request.URL)
 	if err != nil {
 		return entities.ProxyResponse{}, fmt.Errorf("usecase: ProxyRequest: Parse url: %w", err)
 	}
 	cacheKey, err := makeKeyForCache(request)
 	if err != nil {
-		return entities.ProxyResponse{}, fmt.Errorf("usecase: ProxyRequest: %w", err)
+		return entities.ProxyResponse{}, fmt.Errorf("usecase: ProxyRequest: makeKeyForCache: %w", err)
 	}
 	response, ok := p.cache.Get(cacheKey) // check cache, if request have already been, return return it
 	if ok {
@@ -46,16 +49,10 @@ func (p *ProxyUsecase) ProxyRequest(request entities.ProxyRequest) (entities.Pro
 	client := &http.Client{}
 	resp, err := client.Do(newRequest) // get response
 	if err != nil {
-		return entities.ProxyResponse{}, fmt.Errorf("usecase: ProxyRequest: get response: %w", err)
+		return entities.ProxyResponse{}, fmt.Errorf("usecase: ProxyRequest: client.Do: %w", err)
 	}
-	// fmt.Println(resp.Header["Content-Type"])
-	// if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-	// 	fmt.Println(err)
-	// 	return entities.ProxyResponse{}, fmt.Errorf("usecase: ProxyRequest: Decode: %w", err)
-	// }
-	// if len(response.Body) != 0 {
+
 	p.cache.Set(cacheKey, makeProxyResponse(resp))
-	// }
 	return makeProxyResponse(resp), nil
 }
 
