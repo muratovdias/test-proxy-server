@@ -34,7 +34,7 @@ func (p *ProxyUsecase) ProxyRequest(request entities.ProxyRequest) (entities.Pro
 	if err != nil {
 		return entities.ProxyResponse{}, fmt.Errorf("usecase: ProxyRequest: makeKeyForCache: %w", err)
 	}
-	response, ok := p.cache.Get(cacheKey) // check cache, if request have already been, return return it
+	response, ok := p.cache.Get(cacheKey) // check cache, if request have already been, just return it from cahce
 	if ok {
 		log.Println("response from cache")
 		return response, nil
