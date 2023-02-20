@@ -31,7 +31,6 @@ func (app *App) Run() error {
 		fmt.Println(err.Error())
 		return err
 	}
-	// fmt.Println("Server started at port 8888")
 	return nil
 }
 
